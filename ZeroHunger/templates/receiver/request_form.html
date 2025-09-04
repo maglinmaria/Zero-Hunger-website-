@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Request Food - Zero Hunger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-hand-paper me-2"></i>Request Food Item</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Food Details -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            {% if food.image_filename %}
+                                <img src="{{ url_for('static', filename='uploads/' + food.image_filename) }}" 
+                                     class="img-fluid rounded" alt="{{ food.title }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                     style="height: 200px;">
+                                    <i class="fas fa-utensils fa-4x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h5>{{ food.title }}</h5>
+                            <p class="text-muted">{{ food.description }}</p>
+                            
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Category:</strong> 
+                                    <span class="badge bg-info">{{ food.category }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Location:</strong> 
+                                    <i class="fas fa-map-marker-alt text-muted"></i> {{ food.location }}
+                                </div>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Time Left:</strong> 
+                                <span class="text-warning">
+                                    <i class="fas fa-clock"></i> {{ food.expiry_hours }} hours
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Request Form -->
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message to Provider (Optional)</label>
+                            <textarea class="form-control" id="message" name="message" rows="3" 
+                                      placeholder="Let the provider know why you need this food or any special requirements..."></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            By requesting this food, you confirm that you will pick it up from the specified location 
+                            within the given time frame.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('receiver.browse_food') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Browse
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Send Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

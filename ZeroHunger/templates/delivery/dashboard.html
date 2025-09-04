@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Delivery Dashboard - Zero Hunger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-truck me-2"></i>Delivery Person Dashboard</h2>
+            <p class="text-muted">Manage your delivery assignments and help connect food with receivers</p>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>Quick Actions</h5>
+                    <a href="{{ url_for('delivery.available_requests') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-search me-2"></i>Browse Available Requests
+                    </a>
+                    <a href="{{ url_for('switch_role', role='receiver') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-exchange-alt me-2"></i>Switch to Receiver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- My Assignments -->
+        <div class="col-lg-8">
+            <h4>My Delivery Assignments</h4>
+            {% if assignments %}
+                <div class="row">
+                    {% for item in assignments %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                {% if item.food.image_filename %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.food.image_filename) }}" 
+                                         class="card-img-top" alt="{{ item.food.title }}" style="height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                         style="height: 150px;">
+                                        <i class="fas fa-utensils fa-2x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ item.food.title }}</h6>
+                                    <p class="card-text text-muted small">{{ item.food.description[:60] }}{% if item.food.description|length > 60 %}...{% endif %}</p>
+                                    
+                                    <div class="mb-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ item.food.location }}
+                                        </small>
+                                        <span class="badge bg-{% if item.assignment.status == 'assigned' %}warning{% elif item.assignment.status == 'picked_up' %}info{% else %}success{% endif %} float-end">
+                                            {{ item.assignment.status.replace('_', ' ').title() }}
+                                        </span>
+                                    </div>
+                                    
+                                    {% if item.assignment.status == 'assigned' %}
+                                        <div class="mb-2">
+                                            <small class="text-info">
+                                                <strong>Pickup OTP:</strong> {{ item.assignment.pickup_otp }}
+                                            </small>
+                                        </div>
+                                        <a href="{{ url_for('delivery.verify_pickup', assignment_id=item.assignment.id) }}" 
+                                           class="btn btn-sm btn-warning w-100">
+                                            <i class="fas fa-box me-1"></i>Verify Pickup
+                                        </a>
+                                    {% elif item.assignment.status == 'picked_up' %}
+                                        <div class="mb-2">
+                                            <small class="text-success">
+                                                <strong>Delivery OTP:</strong> {{ item.assignment.delivery_otp }}
+                                            </small>
+                                        </div>
+                                        <a href="{{ url_for('delivery.verify_delivery', assignment_id=item.assignment.id) }}" 
+                                           class="btn btn-sm btn-info w-100">
+                                            <i class="fas fa-truck me-1"></i>Verify Delivery
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-success w-100" disabled>
+                                            <i class="fas fa-check me-1"></i>Delivered
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-truck fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">No assignments yet</h6>
+                    <p class="text-muted">Browse available requests to start delivering food</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Available Requests -->
+        <div class="col-lg-4">
+            <h4>Recent Available Requests</h4>
+            {% if available_requests %}
+                {% for item in available_requests %}
+                    <div class="card mb-3">
+                        <div class="card-body p-3">
+                            <h6 class="card-title mb-1">{{ item.food.title }}</h6>
+                            <p class="card-text text-muted small mb-2">{{ item.food.description[:50] }}{% if item.food.description|length > 50 %}...{% endif %}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ item.food.location }}
+                                </small>
+                                <a href="{{ url_for('delivery.accept_request', request_id=item.request.id) }}" 
+                                   class="btn btn-sm btn-primary">Accept</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <div class="text-center">
+                    <a href="{{ url_for('delivery.available_requests') }}" class="btn btn-outline-primary">
+                        View All Available Requests
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">No requests available</h6>
+                    <p class="text-muted">Check back later for new delivery requests</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

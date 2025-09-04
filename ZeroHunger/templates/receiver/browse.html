@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Food - Zero Hunger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-search me-2"></i>Browse Available Food</h2>
+            <p class="text-muted">Find food donations near you</p>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="location" class="form-label">Location (Pin Code)</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   value="{{ current_location }}" placeholder="Enter pin code">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}" {% if current_category == category %}selected{% endif %}>
+                                        {{ category }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <a href="{{ url_for('receiver.browse_food') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h5>
+                {% if foods %}
+                    {{ foods|length }} food item{{ 's' if foods|length != 1 else '' }} found
+                    {% if current_location or current_category %}
+                        <small class="text-muted">
+                            {% if current_location %}in {{ current_location }}{% endif %}
+                            {% if current_category %}{{ ' for ' + current_category if current_location else current_category }}{% endif %}
+                        </small>
+                    {% endif %}
+                {% else %}
+                    No food items found
+                {% endif %}
+            </h5>
+        </div>
+    </div>
+    
+    <!-- Food Grid -->
+    {% if foods %}
+        <div class="row">
+            {% for food in foods %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if food.image_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + food.image_filename) }}" 
+                                 class="card-img-top" alt="{{ food.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 200px;">
+                                <i class="fas fa-utensils fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ food.title }}</h6>
+                            <p class="card-text flex-grow-1">{{ food.description }}</p>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-info">{{ food.category }}</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ food.location }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ food.expiry_hours }}h left
+                                </small>
+                            </div>
+                            
+                            <div class="mt-auto">
+                                <a href="{{ url_for('receiver.request_food_item', food_id=food.id) }}" 
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-hand-paper me-2"></i>Request This Food
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h5 class="text-muted">No food items found</h5>
+            {% if current_location or current_category %}
+                <p class="text-muted">Try adjusting your search filters</p>
+                <a href="{{ url_for('receiver.browse_food') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-refresh me-2"></i>View All Available Food
+                </a>
+            {% else %}
+                <p class="text-muted">No food donations are currently available. Check back later!</p>
+                <a href="{{ url_for('switch_role', role='provider') }}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>Become a Food Provider
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+Build a Flask app called "Zero Hunger" that connects restaurants, hotels, households (donors/providers) with NGOs/shelters (receivers/customers).
+
+🔹 App Features:
+1. User Roles:
+   - Providers (restaurants/hotels/households) → Upload surplus food details with photo.
+   - Receivers (NGOs/shelters/customers) → Browse available food nearby and request it.
+   - Option to switch role anytime from profile (Provider ↔ Receiver ↔ Customer).
+
+2. AI Assistance:
+   - Food image recognition using a pre-trained ML model (TensorFlow/Keras or any lightweight CNN).
+   - Classify uploaded food image into categories (e.g., Rice, Bread, Vegetables, Curry).
+   - (Optional) Portion size estimation.
+
+3. Matching System:
+   - Donor uploads food with location (use simple pin code input instead of Google Maps for now).
+   - Receivers can search/filter available food based on pin code and type of food.
+   - Once requested, mark food as “Booked” so others can’t take it.
+
+4. Basic Features:
+   - User authentication (Login/Register with Flask-Login).
+   - Upload food form (title, description, expiry time, image, location).
+   - Browse food (grid/list view for NGOs/customers).
+   - Accept/Request food button → assign to receiver.
+   - Dashboard page (different for Provider & Receiver).
+   - Simple role-switch dropdown in navbar.
+
+5. Tech Stack:
+   - Backend: Flask (with Flask-SQLAlchemy for database).
+   - Auth: Flask-Login.
+   - Database: SQLite (for easy setup in Replit).
+   - Frontend: HTML + Bootstrap (inside templates folder).
+   - AI: TensorFlow/Keras pre-trained model for image classification.
+
+6. Folder Structure:
+   - app.py → Main Flask app
+   - models.py → Database models (User, Food, Requests)
+   - routes.py → Routes for login, food upload, browsing, role switching
+   - templates/ → HTML templates (login.html, register.html, dashboard.html, upload.html, browse.html)
+   - static/ → CSS, JS, uploaded images
+   - ml/ → AI model file for food recognition
+
+✅ Make it modular with blueprints for clean structure.
+✅ Start with basic login + role + food upload form, then add AI food recognition.

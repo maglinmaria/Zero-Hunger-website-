@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Available Requests - Zero Hunger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-truck me-2"></i>Available Delivery Requests</h2>
+            <p class="text-muted">Accept delivery requests from receivers</p>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location (Pin Code)</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   value="{{ current_location }}" placeholder="Enter pin code">
+                        </div>
+                        
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <a href="{{ url_for('delivery.available_requests') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h5>
+                {% if requests %}
+                    {{ requests|length }} delivery request{{ 's' if requests|length != 1 else '' }} available
+                    {% if current_location %}
+                        <small class="text-muted">in {{ current_location }}</small>
+                    {% endif %}
+                {% else %}
+                    No delivery requests found
+                {% endif %}
+            </h5>
+        </div>
+    </div>
+    
+    <!-- Requests Grid -->
+    {% if requests %}
+        <div class="row">
+            {% for item in requests %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if item.food.image_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + item.food.image_filename) }}" 
+                                 class="card-img-top" alt="{{ item.food.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 200px;">
+                                <i class="fas fa-utensils fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ item.food.title }}</h6>
+                            <p class="card-text flex-grow-1">{{ item.food.description }}</p>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-info">{{ item.food.category }}</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ item.food.location }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ item.food.expiry_hours }}h left
+                                </small>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <strong>Requested:</strong> {{ item.request.created_at.strftime('%d %b, %H:%M') }}
+                                </small>
+                            </div>
+                            
+                            {% if item.request.message %}
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>Message:</strong> {{ item.request.message[:50] }}{% if item.request.message|length > 50 %}...{% endif %}
+                                    </small>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mt-auto">
+                                <a href="{{ url_for('delivery.accept_request', request_id=item.request.id) }}" 
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-truck me-2"></i>Accept Delivery Request
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-truck fa-4x text-muted mb-3"></i>
+            <h5 class="text-muted">No delivery requests found</h5>
+            {% if current_location %}
+                <p class="text-muted">Try adjusting your location filter</p>
+                <a href="{{ url_for('delivery.available_requests') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-refresh me-2"></i>View All Available Requests
+                </a>
+            {% else %}
+                <p class="text-muted">No receivers have requested food delivery yet. Check back later!</p>
+                <a href="{{ url_for('switch_role', role='receiver') }}" class="btn btn-primary">
+                    <i class="fas fa-hands-helping me-2"></i>Switch to Receiver Mode
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+/* Custom styles for Zero Hunger app */
+
+.hero-section {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+}
+
+.card-img-top {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Food status badges */
+.badge.bg-success {
+    background-color: var(--bs-success) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--bs-warning) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--bs-info) !important;
+}
+
+/* Ensure proper spacing */
+.container {
+    max-width: 1200px;
+}
+
+/* Custom button styles */
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Card improvements */
+.card {
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Form improvements */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Responsive image handling */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Statistics cards */
+.bg-primary .fas,
+.bg-success .fas,
+.bg-warning .fas,
+.bg-info .fas {
+    opacity: 0.8;
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--bs-border-color);
+}
+
+/* Alert improvements */
+.alert {
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+}
+
+/* Navigation improvements */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Loading states */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Empty states */
+.text-center.py-5 i {
+    color: var(--bs-gray-400);
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75em;
+    font-weight: 600;
+}
